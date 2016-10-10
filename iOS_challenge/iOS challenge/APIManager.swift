@@ -48,6 +48,8 @@ class APIManager {
     
     public func getMovie(id: String, response: @escaping (Any?) -> Void) {
         getResponse(url: "https://api.themoviedb.org/3/movie/\(id)"){ dataResponse in
+            
+            print(dataResponse)
             let dateFormatter = DateFormatter()
             dateFormatter.locale = NSLocale.current
             dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -78,9 +80,11 @@ class APIManager {
                 generes: genres,
                 cast: nil,
                 tagline: data["tagline"]?.string,
-                poster: data["poster_path"]?.string
+                poster: data["poster_path"]?.string,
+                url: data["homepage"]?.string
                 
             )
+            print(dataForMovie)
             response(dataForMovie)
         }
     }

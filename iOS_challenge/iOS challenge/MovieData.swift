@@ -20,6 +20,7 @@ struct MovieData {
     var cast: [Actor]?
     let tagline: String?
     let poster: String?
+    let url: String?
 }
 
 struct Actor {

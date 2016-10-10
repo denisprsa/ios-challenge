@@ -498,6 +498,9 @@ Cg
                                                         <subviews>
                                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B2g-we-IXt">
                                                                 <state key="normal" backgroundImage="share"/>
+                                                                <connections>
+                                                                    <action selector="shareMovie:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tVN-es-dJX"/>
+                                                                </connections>
                                                             </button>
                                                         </subviews>
                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>

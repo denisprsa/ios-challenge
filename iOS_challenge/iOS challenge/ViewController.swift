@@ -50,7 +50,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     @IBAction func starVIewClick(_ sender: HCSStarRatingView) {
         if let guestSessionID = guestSession?.guestSessionID {
-            print("OK")
             APIManager.instance.setRating(
                 id: movieID,
                 value: Int(ratingView.value),
@@ -58,8 +57,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                     
                     print(response)
             }
-        } else {
-            print("NONO")
         }
     }
     
@@ -71,17 +68,23 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         UIApplication.shared.openURL(URL(string: "https://www.youtube.com/watch?v=\(key)")!)
     }
     
+    @IBAction func shareMovie(_ sender: AnyObject) {
+        print(dataForMovie?.url)
+        if let myWebsite = NSURL(string: dataForMovie?.url ?? "") {
+            let objectsToShare = ["", myWebsite] as [Any]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            self.present(activityVC, animated: true, completion: nil)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         setup()
-        
         getData()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -173,7 +176,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
         
         APIManager.instance.getVideos(id: movieID) { (response) in
-            print(response)
             self.videos = response as! [MovieVideo]
         }
     }
@@ -276,8 +278,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewFlowLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize {
         if collectionView == genreCollectionView {
-            //let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "genreCell", for: indexPath) as! GenreCollectionViewCell
-            //print(cell)
+            return CGSize(width: collectionViewLayout.itemSize.width + 15, height: collectionViewLayout.itemSize.height)
         }
         return collectionViewLayout.itemSize
     }
