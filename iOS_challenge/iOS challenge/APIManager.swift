@@ -78,7 +78,6 @@ class APIManager {
                 generes: genres,
                 cast: nil,
                 tagline: data["tagline"]?.string,
-                video: nil,
                 poster: data["poster_path"]?.string
                 
             )
@@ -107,7 +106,20 @@ class APIManager {
     public func getVideos(id: String, response: @escaping (Any?) -> Void) {
         getResponse(url: "https://api.themoviedb.org/3/movie/\(id)/videos"){ dataResponse in
             
-            response(dataResponse)
+            let data = JSON(dataResponse).dictionaryValue
+            var videos: [MovieVideo] = []
+            if let list = data["results"] {
+                for (_, subJson)  in list {
+                    let data = MovieVideo(
+                        id: subJson["id"].string,
+                        key: subJson["key"].string,
+                        type: subJson["type"].string,
+                        site: subJson["site"].string
+                    )
+                    videos.append(data)
+                }
+            }
+            response(videos)
         }
     }
     

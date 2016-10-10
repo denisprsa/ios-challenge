@@ -14,6 +14,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     // MARK: - Variables
     
+    
+    @IBOutlet weak var upperMarginContainter: UIView!
     @IBOutlet weak var ratingView: HCSStarRatingView!
     @IBOutlet weak var playVideoButton: UIButton!
     @IBOutlet weak var ratingLabel: UILabel!
@@ -41,6 +43,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var movieID = "264660"
     var guestSession: GuestSession? = nil
     let keychain = KeychainSwift()
+    var videos: [MovieVideo] = []
     
 
     // MARK: - Override Methods
@@ -60,6 +63,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
     }
     
+    @IBAction func playVideo(_ sender: AnyObject) {
+        guard let key = videos[0].key else {
+            return
+        }
+        
+        UIApplication.shared.openURL(URL(string: "https://www.youtube.com/watch?v=\(key)")!)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,6 +93,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     // MARK: - Private Methods
     
     private func setup() {
+        upperMarginContainter.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.height)
+        
         // SET IMAGE BACKGROUND TO NAVIGATION BAR
         let image = UIImage(named: "navBarBackgorund")
         UINavigationBar.appearance().setBackgroundImage(image, for: .default)
@@ -139,7 +151,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 if sessionDate < Date(){
                     self.sendRequestSession()
                 } else {
-                    self.guestSession = GuestSession(success: true, guestSessionID: key, expiresAT: sessionDate)    
+                    self.guestSession = GuestSession(success: true, guestSessionID: key, expiresAT: sessionDate)
                 }
             }
         } else {
@@ -159,14 +171,28 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 self.setData()
             }
         }
+        
+        APIManager.instance.getVideos(id: movieID) { (response) in
+            print(response)
+            self.videos = response as! [MovieVideo]
+        }
     }
     
     func setData() {
+        var yearMovie = ""
+        if let date = self.dataForMovie?.realeseDate {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MMM d, YYYY"
+            self.realeseDateLabel.text = dateFormatter.string(from: date as Date)
+            dateFormatter.dateFormat = "YYYY"
+            yearMovie = dateFormatter.string(from: date as Date)
+        }
+        
         self.mainTitle.text = self.dataForMovie?.title
         
         let uppercasedTitle = self.dataForMovie?.title?.uppercased()
         guard let tittleForNavBar = uppercasedTitle else { return }
-        self.navigationBar.topItem?.title = tittleForNavBar
+        self.navigationBar.topItem?.title = tittleForNavBar + " \(yearMovie)"
         
         // revenue
         let numberFormatter = NumberFormatter()
@@ -183,12 +209,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         self.overviewLabel.text = self.dataForMovie?.overview ?? ""
         self.introLabel.text = self.dataForMovie?.tagline ?? ""
-        
-        if let date = self.dataForMovie?.realeseDate {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MMM d, YYYY"
-            self.realeseDateLabel.text = dateFormatter.string(from: date as Date)
-        }
         
         self.genreCollectionView.reloadData()
         self.actorsCollectionView.reloadData()
@@ -313,11 +333,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 }
                 
                 if scrollView.contentOffset.y < 120  {
-                    let valueAlpha = 1.0 - (120 / scrollView.contentOffset.y)
+                    let valueAlpha = 1.0 - (scrollView.contentOffset.y / 120)
                     self.playVideoButton.alpha = valueAlpha
                     let scale = scrollView.contentOffset.y / 30
                     self.scrollViewBackgoround.zoomScale = scale
-                    self.scrollViewBackgoround.contentOffset = CGPoint(x: 0, y: scrollView.contentOffset.y / 20 )
+                    self.scrollViewBackgoround.contentOffset = CGPoint(x: 0, y: scrollView.contentOffset.y / 3 )
                 }
                 
             } else if (scrollView.contentOffset.y <= 0){

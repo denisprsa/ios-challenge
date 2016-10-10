@@ -19,7 +19,6 @@ struct MovieData {
     var generes: [Genres]?
     var cast: [Actor]?
     let tagline: String?
-    let video: String?
     let poster: String?
 }
 
@@ -38,4 +37,10 @@ struct GuestSession {
     let success: Bool?
     var guestSessionID: String?
     var expiresAT: Date?
+}
+struct MovieVideo {
+    let id: String?
+    let key: String?
+    let type: String?
+    let site: String?
 }

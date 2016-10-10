@@ -92,6 +92,22 @@
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7rl-WY-0wH">
                                         <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tye-UH-ElN">
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mXS-mT-Z0Y">
+                                                        <connections>
+                                                            <action selector="playVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="b1P-Z3-037"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="mXS-mT-Z0Y" secondAttribute="bottom" id="3Iy-FJ-6e0"/>
+                                                    <constraint firstItem="mXS-mT-Z0Y" firstAttribute="top" secondItem="Tye-UH-ElN" secondAttribute="top" id="XQZ-3m-a9k"/>
+                                                    <constraint firstAttribute="trailing" secondItem="mXS-mT-Z0Y" secondAttribute="trailing" id="cTY-SF-Q2a"/>
+                                                    <constraint firstItem="mXS-mT-Z0Y" firstAttribute="leading" secondItem="Tye-UH-ElN" secondAttribute="leading" id="wU6-Pk-Y7Z"/>
+                                                </constraints>
+                                            </view>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ex Machina" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G0a-Pt-WXN">
                                                 <fontDescription key="fontDescription" name="OpenSans-Light" family="Open Sans" pointSize="30"/>
                                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -528,6 +544,8 @@ Cg
                                             <constraint firstItem="KqF-jC-iZN" firstAttribute="leading" secondItem="7rl-WY-0wH" secondAttribute="leading" id="5Pi-8d-2g0"/>
                                             <constraint firstItem="G0a-Pt-WXN" firstAttribute="leading" secondItem="7rl-WY-0wH" secondAttribute="leading" constant="16" id="6a1-pr-EUO"/>
                                             <constraint firstAttribute="trailing" secondItem="eah-Lf-Gnu" secondAttribute="trailing" constant="16" id="8g0-DZ-YCL"/>
+                                            <constraint firstItem="Tye-UH-ElN" firstAttribute="leading" secondItem="7rl-WY-0wH" secondAttribute="leading" id="9p2-6A-MSB"/>
+                                            <constraint firstItem="G0a-Pt-WXN" firstAttribute="top" secondItem="Tye-UH-ElN" secondAttribute="bottom" constant="8" id="EXf-g6-nDC"/>
                                             <constraint firstItem="Dij-QF-49P" firstAttribute="top" secondItem="GU6-LK-BJK" secondAttribute="bottom" constant="22" id="FXI-s0-W1a"/>
                                             <constraint firstAttribute="trailing" secondItem="KqF-jC-iZN" secondAttribute="trailing" id="IIf-Hw-bEE"/>
                                             <constraint firstItem="9mJ-5F-meG" firstAttribute="top" secondItem="IZF-L4-jhQ" secondAttribute="bottom" constant="16" id="PYN-z0-yeL"/>
@@ -545,6 +563,7 @@ Cg
                                             <constraint firstAttribute="trailing" secondItem="9mJ-5F-meG" secondAttribute="trailing" constant="16" id="joV-P7-349"/>
                                             <constraint firstItem="79g-b3-fLM" firstAttribute="leading" secondItem="7rl-WY-0wH" secondAttribute="leading" constant="16" id="lnj-n0-4Iq"/>
                                             <constraint firstItem="Tlw-XG-vQg" firstAttribute="leading" secondItem="7rl-WY-0wH" secondAttribute="leading" constant="16" id="o4f-Xv-SAW"/>
+                                            <constraint firstAttribute="trailing" secondItem="Tye-UH-ElN" secondAttribute="trailing" id="oOs-Wn-AvU"/>
                                             <constraint firstItem="GU6-LK-BJK" firstAttribute="leading" secondItem="7rl-WY-0wH" secondAttribute="leading" id="p3d-td-6qB"/>
                                             <constraint firstItem="eah-Lf-Gnu" firstAttribute="top" secondItem="e9T-xa-1ZP" secondAttribute="bottom" constant="16" id="pIQ-vG-24W"/>
                                             <constraint firstAttribute="trailing" secondItem="IZF-L4-jhQ" secondAttribute="trailing" id="r8e-NM-b64"/>
@@ -554,6 +573,7 @@ Cg
                                             <constraint firstItem="G0a-Pt-WXN" firstAttribute="top" secondItem="7rl-WY-0wH" secondAttribute="top" constant="486.5" id="wJY-4i-fuq"/>
                                             <constraint firstAttribute="trailing" secondItem="G0a-Pt-WXN" secondAttribute="trailing" constant="16" id="y6p-xX-G8P"/>
                                             <constraint firstItem="GU6-LK-BJK" firstAttribute="top" secondItem="eah-Lf-Gnu" secondAttribute="bottom" constant="16" id="ysx-4n-sIp"/>
+                                            <constraint firstItem="Tye-UH-ElN" firstAttribute="top" secondItem="7rl-WY-0wH" secondAttribute="top" id="z9t-QP-VlL"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -604,8 +624,10 @@ Cg
                             <constraint firstItem="XYF-j7-1c2" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="zqe-1B-Djs"/>
                         </constraints>
                     </view>
+                    <toolbarItems/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <nil key="simulatedTopBarMetrics"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="375" height="2667"/>
                     <connections>
@@ -626,6 +648,7 @@ Cg
                         <outlet property="runTimeLabel" destination="N7X-i8-ceT" id="kGg-Ex-hyo"/>
                         <outlet property="scrollView" destination="CXc-hT-EOM" id="HPb-8b-CAA"/>
                         <outlet property="scrollViewBackgoround" destination="ty1-Oh-S3s" id="dT7-km-Dva"/>
+                        <outlet property="upperMarginContainter" destination="Tye-UH-ElN" id="Z1F-22-HD5"/>
                         <outlet property="votesLabel" destination="9d0-O9-Tmb" id="saJ-Ck-jTP"/>
                     </connections>
                 </viewController>
