@@ -12,6 +12,15 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     // MARK: - Variables
     
+    @IBOutlet weak var ratingLabel: UILabel!
+    @IBOutlet weak var realeseDateLabel: UILabel!
+    @IBOutlet weak var revenuLabel: UILabel!
+    @IBOutlet weak var runTimeLabel: UILabel!
+    @IBOutlet weak var IMDBRatingLabel: UILabel!
+    @IBOutlet weak var votesLabel: UILabel!
+    @IBOutlet weak var scrollViewBackgoround: UIScrollView!
+    @IBOutlet weak var introLabel: UILabel!
+    @IBOutlet weak var overviewLabel: UILabel!
     @IBOutlet weak var blackOverlay: UIView!
     @IBOutlet weak var genreCollectionView: UICollectionView!
     @IBOutlet weak var mainImage: UIImageView!
@@ -22,7 +31,10 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var mainTitle: UILabel!
     var dataForMovie: MovieData? = nil
     var originalBackgroundImage: UIImageView = UIImageView()
-    
+    var contextBlur = CIContext(options:nil)
+    var filter: CIFilter!
+    var sizeOriginalBackground = CGSize()
+    var mainImageLoaded = false
     
 
     // MARK: - Override Methods
@@ -64,45 +76,26 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         scrollView.delegate = self
         
-        // STARVIEW SETUP
-        self.originalBackgroundImage.image = mainImage.image
+        scrollViewBackgoround.delegate = self
+        //scrollViewBackgoround.zoomScale = 2
         
+        self.mainImage.image = UIImage(named: "placeholder-movie")
     }
     
     private func getData() {
         // Get movie from this id
-        APIManager.instance.getActors(id: "264660") { response in
-            var data = JSON(response).dictionaryValue
+        APIManager.instance.getGuestSession(){ response in
+            print(response)
+        }
+        
+        APIManager.instance.getMovie(id: "278154") { response in
             
-            var genres:[Genres]? = []
-            if let genresList = data["genres"] {
-                for (_, subJson)  in genresList {
-                    if let name = subJson["name"].string, let id = subJson["id"].int {
-                        
-                        genres?.append(Genres(
-                            id: id,
-                            name: name
-                        ))
-                    }
-                }
+            APIManager.instance.getActors(id: "278154") { castResponse in
+                self.dataForMovie = response as! MovieData?
+                self.dataForMovie?.cast = castResponse as! [Actor]?
+                self.setupMainImage()
+                self.setData()
             }
-            
-            self.dataForMovie = MovieData(
-                title: data["original_title"]?.string,
-                runtime: data["runtime"]?.string,
-                voteAverage: data["vote_average"]?.double,
-                voteCount: data["vote_count"]?.intValue,
-                overview: data["overview"]?.string,
-                realeseDate: data["release_date"]?.string,
-                revenue: data["revenue"]?.double,
-                generes: genres,
-                cast: nil,
-                storyLine: data["release_date"]?.string,
-                video: nil
-                
-            )
-            
-            self.setData()
         }
     }
     
@@ -113,61 +106,160 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         guard let tittleForNavBar = uppercasedTitle else { return }
         self.navigationBar.topItem?.title = tittleForNavBar
         
+        // revenue
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = NumberFormatter.Style.currency
+        numberFormatter.locale = Locale(identifier: "en_US")
+        numberFormatter.maximumFractionDigits = 0
+        self.revenuLabel.text = numberFormatter.string(from: NSNumber(value: self.dataForMovie?.revenue ?? 0))
         
+        self.runTimeLabel.text = minutesToHoursMinutes(minutes: self.dataForMovie?.runtime ?? 0)
         
+        self.votesLabel.text = "(\(dataForMovie?.voteCount ?? 0) votes)"
+        
+        self.IMDBRatingLabel.text = "\(dataForMovie?.voteAverage ?? 0.0)"
+        
+        self.overviewLabel.text = self.dataForMovie?.overview ?? ""
+        self.introLabel.text = self.dataForMovie?.tagline ?? ""
+        
+        self.genreCollectionView.reloadData()
+        self.actorsCollectionView.reloadData()
+    }
+    
+    func minutesToHoursMinutes (minutes : Int) -> String {
+        let (hr,  minf) = modf (Double(minutes) / 60)
+        let (min,  _) = modf (minf * 60)
+        return "\(Int(hr)) hr \(Int(min)) min"
+    }
+    
+    private func setupMainImage(){
+        // STARVIEW SETUP
+        if let linkImage = self.dataForMovie?.poster {
+            self.mainImage.sd_setImage(
+                with: URL(string: "https://image.tmdb.org/t/p/w500" + linkImage),
+                completed: { (image, error, imageCacheType, url) in
+                    print(url)
+                    self.originalBackgroundImage.image = image
+                    
+                    // BLUR SETUP
+                    if let im = self.originalBackgroundImage.image {
+                        self.sizeOriginalBackground = im.size
+                        
+                        let i = CIImage(image: im)
+                        
+                        self.filter = CIFilter(name: "CIGaussianBlur")
+                        self.filter?.setValue(i, forKey: kCIInputImageKey)
+                        self.filter?.setValue(0, forKey: kCIInputRadiusKey)
+                        
+                        let cgimg = self.contextBlur.createCGImage(
+                            (self.filter?.outputImage)!,
+                            from: CGRect(x: 0, y: 0, width: im.size.width, height: im.size.height)
+                        )
+                        
+                        let newImage = UIImage(cgImage: cgimg!)
+                        
+                        self.mainImage.image = newImage
+                    }
+            })
+        }
     }
     
     // MARK: - Functions for CollectionView
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         if collectionView == actorsCollectionView {
-            let json = JSON([
-                "name": "Denis",
-                "image": "tmp"
-                ])
-            
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "actorCell", for: indexPath) as! ActorCollectionViewCell
-            cell.setup(json: json)
+            cell.setup(data: (self.dataForMovie?.cast?[indexPath.row])!)
             
             return cell
 
         } else {
-            let json = JSON([
-                "name": "Denis",
-                "image": "tmp"
-                ])
-            
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "genreCell", for: indexPath) as! GenreCollectionViewCell
-            cell.setup(json: json)
+            
+            guard let data = self.dataForMovie?.generes?[indexPath.row] else {
+                return cell
+            }
+            
+            cell.setup(data: data)
             
             return cell
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewFlowLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize {
+        print(collectionView)
+        if collectionView == genreCollectionView {
+            //let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "genreCell", for: indexPath) as! GenreCollectionViewCell
+            //print(cell)
+        }
+        return collectionViewLayout.itemSize
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        return 10
+        if collectionView == actorsCollectionView {
+            guard let items = self.dataForMovie?.cast?.count else {
+                return 0
+            }
+            print("actors \(items)")
+            return items
+        } else {
+            guard let items = self.dataForMovie?.generes?.count else {
+                return 0
+            }
+            print("generes \(items)")
+            return items
+        }
     }
 
     // MARK: - ScrollView detect scroll
     
+    var setted = false
+    var calculating = false
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print(scrollView.contentOffset.y)
         
-        if scrollView.contentOffset.y > 0 && scrollView.contentOffset.y <= 260 {
-            let alpha = scrollView.contentOffset.y / 360
-            blackOverlay.backgroundColor = UIColor(white: 0, alpha: alpha)
+        if scrollView == self.scrollView{
+            if scrollView.contentOffset.y > 0 && scrollView.contentOffset.y <= 260 {
+                
+                DispatchQueue.global(qos: .default).async { [weak self] () -> Void in
+                    if (self?.calculating == false){
+                        self?.calculating = true
+                        let alpha = scrollView.contentOffset.y / 300
+                        
+                        let sliderValue = scrollView.contentOffset.y / 10
+                        
+                        self?.filter.setValue(sliderValue, forKey: kCIInputRadiusKey)
+                        let outputImage = self?.filter.value(forKey: kCIOutputImageKey)
+                        let cgimg = self?.contextBlur.createCGImage(
+                            outputImage! as! CIImage,
+                            from: CGRect(
+                                x: 0, y: 0,
+                                width: (self?.sizeOriginalBackground.width)!,
+                                height: (self?.sizeOriginalBackground.height)!
+                            )
+                        )
+                        let newImage = UIImage(cgImage: cgimg!)
+                        
+                        DispatchQueue.main.async { () -> Void in
+                            self?.blackOverlay.backgroundColor = UIColor(white: 0, alpha: alpha)
+                            self?.mainImage.image = newImage
+                            self?.calculating = false
+                        }
 
-            let radius = scrollView.contentOffset.y / 2
-            let iterations = scrollView.contentOffset.y / 50
-            
-            mainImage.image = self.originalBackgroundImage.image?.blurredImage(
-                withRadius: radius,
-                iterations: UInt(iterations),
-                tintColor: .black
-            )
-            
+                    }
+                }
+                
+                if scrollView.contentOffset.y < 120  {
+                    
+                    let scale = scrollView.contentOffset.y / 30
+                    //self.scrollViewBackgoround.zoomScale = scale
+                    self.scrollViewBackgoround.contentOffset = CGPoint(x: 0, y: scrollView.contentOffset.y / 20 )
+                }
+                
+            } else if (scrollView.contentOffset.y <= 0){
+                setted = false
+                mainImage.image = self.originalBackgroundImage.image
+                blackOverlay.backgroundColor = UIColor(white: 0, alpha: 0)
+            }
         }
     }
     

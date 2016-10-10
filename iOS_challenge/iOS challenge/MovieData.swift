@@ -10,19 +10,20 @@ import Foundation
 
 struct MovieData {
     let title: String?
-    let runtime: String?
+    let runtime: Int?
     let voteAverage: Double?
     let voteCount: Int?
     let overview: String?
-    let realeseDate: String?
+    let realeseDate: NSDate?
     let revenue: Double?
-    let generes: [Genres]?
-    let cast: [Cast]?
-    let storyLine: String?
+    var generes: [Genres]?
+    var cast: [Actor]?
+    let tagline: String?
     let video: String?
+    let poster: String?
 }
 
-struct Cast {
+struct Actor {
     let name: String?
     let picture: String?
     let roleName: String?
@@ -31,4 +32,10 @@ struct Cast {
 struct Genres {
     let id: Int?
     let name: String?
+}
+
+struct GuestSession {
+    let success: Bool?
+    let guestSessionID: String?
+    let expiresAT: NSDate?
 }

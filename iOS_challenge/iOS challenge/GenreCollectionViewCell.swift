@@ -18,10 +18,13 @@ class GenreCollectionViewCell: UICollectionViewCell {
    
     // MARK: - SET VALUES
     
-    func setup(json: JSON?) {
-        print("setted")
-        button.setTitle("hahah", for: .normal)
+    func setup(data: Genres) {
+        guard let name = data.name else {
+            return
+        }
+        button.setTitle(name, for: .normal)
         
+        //button.bounds.size.width = button.bounds.size.width + 14
         
     }
 }

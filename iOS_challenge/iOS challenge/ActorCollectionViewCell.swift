@@ -5,7 +5,7 @@
 //  Created by Denis Prša on 7. 10. 16.
 //  Copyright © 2016 Denis Prša. All rights reserved.
 //
-
+import SDWebImage
 import UIKit
 
 class ActorCollectionViewCell: UICollectionViewCell {
@@ -16,11 +16,17 @@ class ActorCollectionViewCell: UICollectionViewCell {
     
     // MARK: - SET VALUES
     
-    func setup(json: JSON?) {
-        let image = json?["image"].string ?? ""
+    func setup(data: Actor) {
         
-        self.name.text = json?["name"].string ?? ""
-        self.image.image = UIImage(named: image)
-        self.nameInMovie.text = json?["name_in_movie"].string ?? ""
+        guard let name = data.name, let roleName = data.roleName, let image = data.picture else {
+            return
+        }
+        
+        self.name.text = name
+        self.image.sd_setImage(
+            with:  URL(string: "https://image.tmdb.org/t/p/w500" + image),
+            placeholderImage: UIImage(named: "ProfilePlaceholderSuit")
+        )
+        self.nameInMovie.text = "- " + roleName
     }
 }

@@ -39,11 +39,95 @@ class APIManager {
     
     // MARK: - Public Methods for retrieving data
     
-    public func getActors(id: String, response: @escaping (Any?) -> Void) {
+    public func getMovie(id: String, response: @escaping (Any?) -> Void) {
         getResponse(url: "https://api.themoviedb.org/3/movie/\(id)"){ dataResponse in
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = NSLocale.current
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            
+            let data = JSON(dataResponse).dictionaryValue
+            
+            var genres:[Genres]? = []
+            if let genresList = data["genres"] {
+                for (_, subJson)  in genresList {
+                    if let name = subJson["name"].string, let id = subJson["id"].int {
+                        
+                        genres?.append(Genres(
+                            id: id,
+                            name: name
+                        ))
+                    }
+                }
+            }
+            
+            let dataForMovie = MovieData(
+                title: data["original_title"]?.string,
+                runtime: data["runtime"]?.intValue,
+                voteAverage: data["vote_average"]?.double,
+                voteCount: data["vote_count"]?.intValue,
+                overview: data["overview"]?.string,
+                realeseDate: dateFormatter.date(from: (data["release_date"]?.string)!) as NSDate?,
+                revenue: data["revenue"]?.double,
+                generes: genres,
+                cast: nil,
+                tagline: data["tagline"]?.string,
+                video: nil,
+                poster: data["poster_path"]?.string
+                
+            )
+            
+            print(dataResponse)
+            response(dataForMovie)
+        }
+    }
+    
+    public func getActors(id: String, response: @escaping (Any?) -> Void) {
+        getResponse(url: "https://api.themoviedb.org/3/movie/\(id)/credits"){ dataResponse in
+            let data = JSON(dataResponse).dictionaryValue
+            var arrayOfActors: [Actor] = []
+            if let list = data["cast"] {
+                for (_, subJson)  in list {
+                    let data = Actor(
+                        name: subJson["name"].string,
+                        picture: subJson["profile_path"].string,
+                        roleName: subJson["character"].string
+                    )
+                    arrayOfActors.append(data)
+                }
+            }
+            
+            response(arrayOfActors)
+        }
+    }
+    
+    public func getVideos(id: String, response: @escaping (Any?) -> Void) {
+        getResponse(url: "https://api.themoviedb.org/3/movie/\(id)/videos"){ dataResponse in
+            
             response(dataResponse)
         }
-        
+    }
+    
+    public func getGuestSession( response: @escaping (Any?) -> Void) {
+        getResponse(url: "https://api.themoviedb.org/3/authentication/guest_session/new"){ dataResponse in
+            let data = JSON(dataResponse).dictionaryValue
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = NSLocale.current
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
+            
+            let sessionData = GuestSession(
+                success: data["success"]?.bool,
+                guestSessionID: data["guest_session_id"]?.string,
+                expiresAT: dateFormatter.date(from: (data["expires_at"]?.string)!) as NSDate?
+            )
+            
+            response(sessionData)
+        }
+    }
+    
+    public func setRating(id: String, response: @escaping (Any?) -> Void) {
+        getResponse(url: "https://api.themoviedb.org/3/movie/\(id)/rating"){ dataResponse in
+            response(dataResponse)
+        }
     }
     
     // MARK: - Public Methods for posting data
