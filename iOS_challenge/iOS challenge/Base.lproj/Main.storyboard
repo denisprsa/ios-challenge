@@ -22,7 +22,7 @@
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="1667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="2667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XYF-j7-1c2">
@@ -74,7 +74,7 @@
                                     </view>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="backgorund" translatesAutoresizingMaskIntoConstraints="NO" id="slt-1v-bw1">
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="697" id="k6a-Dy-nsD"/>
+                                            <constraint firstAttribute="height" constant="1100" id="bJd-82-kzn"/>
                                         </constraints>
                                     </imageView>
                                 </subviews>
@@ -116,6 +116,9 @@
                                                             <userDefinedRuntimeAttribute type="image" keyPath="filledStarImage" value="star"/>
                                                             <userDefinedRuntimeAttribute type="image" keyPath="emptyStarImage" value="blackstar"/>
                                                         </userDefinedRuntimeAttributes>
+                                                        <connections>
+                                                            <action selector="starVIewClick:" destination="BYZ-38-t0r" eventType="valueChanged" id="kRQ-nP-ziK"/>
+                                                        </connections>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UgK-r5-YrM">
                                                         <subviews>
@@ -398,7 +401,7 @@
                                                 </collectionViewFlowLayout>
                                                 <cells>
                                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="actorCell" id="yON-Eh-jWf" customClass="ActorCollectionViewCell" customModule="iOS_challenge" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="3.5" width="92" height="163"/>
+                                                        <rect key="frame" x="0.0" y="4" width="92" height="163"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                                             <rect key="frame" x="0.0" y="0.0" width="92" height="163"/>
@@ -453,8 +456,8 @@
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tlw-XG-vQg">
                                                 <attributedString key="attributedText">
                                                     <fragment>
-                                                        <mutableString key="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar, dolor et rhoncus vulputate, massa velit suscipit dolor, at pharetra sem libero a metus. Morbi ipsum lectus, commodo quis enim a, posuere dignissim eros. Morbi pretium diam rutrum dictum venenatis. In ante ligula, volutpat nec aliquet sed, sodales a erat. Donec at elementum diam. Donec vestibulum, magna non laoreet varius, nunc orci condimentum lacus, a maximus purus magna et libero. Nullam ante dolor, posuere nec tristique sodales, malesuada convallis risus. Suspendisse potenti. In massa lorem, posuere aliquam tristique ac, ornare faucibus ligula. In et malesuada risus. Suspendisse non lectus eget erat malesuada scelerisque.
-</mutableString>
+                                                        <string key="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar, dolor et rhoncus vulputate, massa velit suscipit dolor, at pharetra sem libero a metus. Morbi ipsum lectus, commodo quis enim a, posuere dignissim eros. Morbi pretium diam rutrum dictum venenatis. In ante ligula, volutpat nec aliquet sed, sodales a erat. Donec at elementum diam. Donec vestibulum, magna non laoreet varius, nunc orci condimentum lacus, a maximus purus magna et libero. Nullam ante dolor, posuere nec tristique sodales, malesuada convallis risus. Suspendisse potenti. In massa lorem, posuere aliquam tristique ac, ornare faucibus ligula. In et malesuada risus. Suspendisse non lectus eget erat malesuada scelerisque.
+</string>
                                                         <attributes>
                                                             <color key="NSColor" red="0.65490196078431373" green="0.65490196078431373" blue="0.60392156862745094" alpha="1" colorSpace="calibratedRGB"/>
                                                             <font key="NSFont" size="15" name="HelveticaNeue"/>
@@ -476,13 +479,35 @@ Cg
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="79g-b3-fLM">
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z2i-k1-KFY">
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <subviews>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B2g-we-IXt">
+                                                                <state key="normal" backgroundImage="share"/>
+                                                            </button>
+                                                        </subviews>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                        <constraints>
+                                                            <constraint firstItem="B2g-we-IXt" firstAttribute="top" secondItem="z2i-k1-KFY" secondAttribute="top" id="GKm-q0-HLy"/>
+                                                            <constraint firstAttribute="bottom" secondItem="B2g-we-IXt" secondAttribute="bottom" id="aYe-dt-djh"/>
+                                                            <constraint firstAttribute="trailing" secondItem="B2g-we-IXt" secondAttribute="trailing" constant="16" id="f96-QA-SIZ"/>
+                                                            <constraint firstItem="B2g-we-IXt" firstAttribute="leading" secondItem="z2i-k1-KFY" secondAttribute="leading" constant="16" id="k5j-ro-yR0"/>
+                                                        </constraints>
                                                     </view>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R1v-OQ-ijK">
-                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <subviews>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0pi-MM-YlC">
+                                                                <state key="normal" backgroundImage="buy"/>
+                                                            </button>
+                                                        </subviews>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                        <constraints>
+                                                            <constraint firstItem="0pi-MM-YlC" firstAttribute="top" secondItem="R1v-OQ-ijK" secondAttribute="top" id="1l0-ou-sdj"/>
+                                                            <constraint firstItem="0pi-MM-YlC" firstAttribute="leading" secondItem="R1v-OQ-ijK" secondAttribute="leading" constant="16" id="jbu-AF-Waj"/>
+                                                            <constraint firstAttribute="trailing" secondItem="0pi-MM-YlC" secondAttribute="trailing" constant="16" id="mhd-MD-EYu"/>
+                                                            <constraint firstAttribute="bottom" secondItem="0pi-MM-YlC" secondAttribute="bottom" id="se5-j2-JN9"/>
+                                                        </constraints>
                                                     </view>
                                                 </subviews>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
                                                     <constraint firstItem="z2i-k1-KFY" firstAttribute="top" secondItem="79g-b3-fLM" secondAttribute="top" id="DZU-DH-iFD"/>
                                                     <constraint firstItem="z2i-k1-KFY" firstAttribute="leading" secondItem="79g-b3-fLM" secondAttribute="leading" id="Fm0-5y-bry"/>
@@ -582,7 +607,7 @@ Cg
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="375" height="1667"/>
+                    <size key="freeformSize" width="375" height="2667"/>
                     <connections>
                         <outlet property="IMDBRatingLabel" destination="Ypa-mN-fy6" id="Oda-Oo-4wt"/>
                         <outlet property="actorsCollectionView" destination="IZF-L4-jhQ" id="uRU-K3-wgF"/>
@@ -593,13 +618,14 @@ Cg
                         <outlet property="mainTitle" destination="G0a-Pt-WXN" id="lYz-i1-AJh"/>
                         <outlet property="navigationBar" destination="7gL-e9-gK2" id="4G9-uO-hcM"/>
                         <outlet property="overviewLabel" destination="Tlw-XG-vQg" id="2If-kk-1Zv"/>
+                        <outlet property="playVideoButton" destination="m90-JC-aPT" id="0ji-HV-gWw"/>
                         <outlet property="ratingLabel" destination="lf0-Un-Taj" id="uFE-8F-TtZ"/>
+                        <outlet property="ratingView" destination="hfT-ro-4mq" id="ySC-I2-orX"/>
                         <outlet property="realeseDateLabel" destination="YGY-sB-L3Y" id="Git-jQ-n7i"/>
                         <outlet property="revenuLabel" destination="GX0-Rv-4yy" id="g1W-U4-9vg"/>
                         <outlet property="runTimeLabel" destination="N7X-i8-ceT" id="kGg-Ex-hyo"/>
                         <outlet property="scrollView" destination="CXc-hT-EOM" id="HPb-8b-CAA"/>
                         <outlet property="scrollViewBackgoround" destination="ty1-Oh-S3s" id="dT7-km-Dva"/>
-                        <outlet property="starView" destination="hfT-ro-4mq" id="HZl-0T-21Q"/>
                         <outlet property="votesLabel" destination="9d0-O9-Tmb" id="saJ-Ck-jTP"/>
                     </connections>
                 </viewController>
@@ -614,10 +640,12 @@ Cg
         <image name="blackstar" width="128" height="128"/>
         <image name="buttonHig" width="90" height="32"/>
         <image name="buttonHigW" width="90" height="32"/>
+        <image name="buy" width="150" height="32"/>
         <image name="c-file-black-rounded-rectangle-interface-symbol" width="128" height="128"/>
         <image name="lupa" width="22" height="22"/>
         <image name="machina" width="888" height="1315"/>
         <image name="play" width="104" height="104"/>
+        <image name="share" width="150" height="32"/>
         <image name="star" width="256" height="256"/>
     </resources>
 </document>

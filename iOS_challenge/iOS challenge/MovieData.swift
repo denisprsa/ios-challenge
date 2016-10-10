@@ -36,6 +36,6 @@ struct Genres {
 
 struct GuestSession {
     let success: Bool?
-    let guestSessionID: String?
-    let expiresAT: NSDate?
+    var guestSessionID: String?
+    var expiresAT: Date?
 }

@@ -7,11 +7,15 @@
 //
 
 import UIKit
+import HCSStarRatingView
+import KeychainSwift
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate {
     
     // MARK: - Variables
     
+    @IBOutlet weak var ratingView: HCSStarRatingView!
+    @IBOutlet weak var playVideoButton: UIButton!
     @IBOutlet weak var ratingLabel: UILabel!
     @IBOutlet weak var realeseDateLabel: UILabel!
     @IBOutlet weak var revenuLabel: UILabel!
@@ -27,7 +31,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var actorsCollectionView: UICollectionView!
     @IBOutlet weak var navigationBar: UINavigationBar!
-    @IBOutlet weak var starView: UIView!
     @IBOutlet weak var mainTitle: UILabel!
     var dataForMovie: MovieData? = nil
     var originalBackgroundImage: UIImageView = UIImageView()
@@ -35,14 +38,32 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var filter: CIFilter!
     var sizeOriginalBackground = CGSize()
     var mainImageLoaded = false
+    var movieID = "264660"
+    var guestSession: GuestSession? = nil
+    let keychain = KeychainSwift()
     
 
     // MARK: - Override Methods
     
+    @IBAction func starVIewClick(_ sender: HCSStarRatingView) {
+        if let guestSessionID = guestSession?.guestSessionID {
+            print("OK")
+            APIManager.instance.setRating(
+                id: movieID,
+                value: Int(ratingView.value),
+                guestSession: guestSessionID) { response in
+                    
+                    print(response)
+            }
+        } else {
+            print("NONO")
+        }
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
         setup()
         
         getData()
@@ -82,15 +103,56 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         self.mainImage.image = UIImage(named: "placeholder-movie")
     }
     
-    private func getData() {
-        // Get movie from this id
+    private func sendRequestSession(){
         APIManager.instance.getGuestSession(){ response in
-            print(response)
-        }
-        
-        APIManager.instance.getMovie(id: "278154") { response in
+            self.guestSession = response as! GuestSession?
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
             
-            APIManager.instance.getActors(id: "278154") { castResponse in
+            guard let guestSessionKey = self.guestSession?.guestSessionID,
+                let expires = self.guestSession?.expiresAT
+                else {
+                    return
+            }
+            
+            self.keychain.set(
+                dateFormatter.string(from: expires),
+                forKey: "guestSessionDate"
+            )
+            self.keychain.set(
+                guestSessionKey,
+                forKey: "guestSessionKey"
+            )
+        }
+    }
+    
+    private func getUserSession() {
+        let guestSessionData = keychain.get("guestSessionDate")
+        let guestSessionKey = keychain.get("guestSessionKey")
+        if let date = guestSessionData, let key = guestSessionKey {
+            let dateFormatter = DateFormatter()
+            dateFormatter.locale = NSLocale.current
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            print(dateFormatter.date(from: date))
+            
+            if let sessionDate = dateFormatter.date(from: date){
+                if sessionDate < Date(){
+                    self.sendRequestSession()
+                } else {
+                    self.guestSession = GuestSession(success: true, guestSessionID: key, expiresAT: sessionDate)    
+                }
+            }
+        } else {
+            print("NOOK")
+            self.sendRequestSession()
+        }
+    }
+    
+    private func getData() {
+        getUserSession()
+        
+        APIManager.instance.getMovie(id: movieID) { response in
+            APIManager.instance.getActors(id: self.movieID) { castResponse in
                 self.dataForMovie = response as! MovieData?
                 self.dataForMovie?.cast = castResponse as! [Actor]?
                 self.setupMainImage()
@@ -121,6 +183,12 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         self.overviewLabel.text = self.dataForMovie?.overview ?? ""
         self.introLabel.text = self.dataForMovie?.tagline ?? ""
+        
+        if let date = self.dataForMovie?.realeseDate {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MMM d, YYYY"
+            self.realeseDateLabel.text = dateFormatter.string(from: date as Date)
+        }
         
         self.genreCollectionView.reloadData()
         self.actorsCollectionView.reloadData()
@@ -187,7 +255,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewFlowLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize {
-        print(collectionView)
         if collectionView == genreCollectionView {
             //let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "genreCell", for: indexPath) as! GenreCollectionViewCell
             //print(cell)
@@ -200,13 +267,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             guard let items = self.dataForMovie?.cast?.count else {
                 return 0
             }
-            print("actors \(items)")
             return items
         } else {
             guard let items = self.dataForMovie?.generes?.count else {
                 return 0
             }
-            print("generes \(items)")
             return items
         }
     }
@@ -244,14 +309,14 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                             self?.mainImage.image = newImage
                             self?.calculating = false
                         }
-
                     }
                 }
                 
                 if scrollView.contentOffset.y < 120  {
-                    
+                    let valueAlpha = 1.0 - (120 / scrollView.contentOffset.y)
+                    self.playVideoButton.alpha = valueAlpha
                     let scale = scrollView.contentOffset.y / 30
-                    //self.scrollViewBackgoround.zoomScale = scale
+                    self.scrollViewBackgoround.zoomScale = scale
                     self.scrollViewBackgoround.contentOffset = CGPoint(x: 0, y: scrollView.contentOffset.y / 20 )
                 }
                 

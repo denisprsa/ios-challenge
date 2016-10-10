@@ -29,12 +29,19 @@ class APIManager {
         }
     }
     
-    private func jsonLoaded(json: String) {
-        print("JSON: \(json)")
-    }
-    
-    private func jsonFailed(error: NSError) {
-        print("Error: \(error.localizedDescription)")
+    private func postData(url: String, parameters: Any?, response: @escaping (Any?) -> Void) {
+        let manager = AFHTTPSessionManager()
+        manager.post(url,
+                    parameters: parameters,
+                    progress: nil,
+                    success: { (task, respons) in
+                        response(respons)
+            }
+        ){ (dataTask, error) in
+            response(error)
+        }
+
+        
     }
     
     // MARK: - Public Methods for retrieving data
@@ -75,8 +82,6 @@ class APIManager {
                 poster: data["poster_path"]?.string
                 
             )
-            
-            print(dataResponse)
             response(dataForMovie)
         }
     }
@@ -95,7 +100,6 @@ class APIManager {
                     arrayOfActors.append(data)
                 }
             }
-            
             response(arrayOfActors)
         }
     }
@@ -113,26 +117,32 @@ class APIManager {
             let dateFormatter = DateFormatter()
             dateFormatter.locale = NSLocale.current
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss zzz"
-            
-            let sessionData = GuestSession(
-                success: data["success"]?.bool,
-                guestSessionID: data["guest_session_id"]?.string,
-                expiresAT: dateFormatter.date(from: (data["expires_at"]?.string)!) as NSDate?
+            var sessionData = GuestSession(
+                success: nil,
+                guestSessionID: nil,
+                expiresAT: nil
             )
+            
+            if let date = data["expires_at"]?.string{
+                sessionData = GuestSession(
+                    success: data["success"]?.bool,
+                    guestSessionID: data["guest_session_id"]?.string,
+                    expiresAT: dateFormatter.date(from: date)
+                )
+            }
             
             response(sessionData)
         }
     }
     
-    public func setRating(id: String, response: @escaping (Any?) -> Void) {
-        getResponse(url: "https://api.themoviedb.org/3/movie/\(id)/rating"){ dataResponse in
-            response(dataResponse)
-        }
-    }
-    
     // MARK: - Public Methods for posting data
     
-    public func setRating() {
-        
+    public func setRating(id: String, value: Int, guestSession: String, response: @escaping (Any?) -> Void) {
+        let data = ["value" :  value]
+        postData(
+            url: "https://api.themoviedb.org/3/movie/\(id)/rating?guest_session_id=\(guestSession)&api_key=\(key)",
+            parameters: data, response: { responseData in
+                response(responseData)
+        })
     }
 }
